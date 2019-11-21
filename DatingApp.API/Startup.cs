@@ -49,6 +49,7 @@ namespace DatingApp.API
             // app.UseHttpsRedirection();
 
             app.UseRouting();
+            
             app.UseAuthentication();
             app.UseAuthorization();
 
