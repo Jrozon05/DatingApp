@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using AutoMapper;
 using DatingApp.API.Data;
 using DatingApp.API.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -28,9 +29,14 @@ namespace DatingApp.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("RozonConnection")));
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(options => 
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
             services.AddCors();
-            services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddAutoMapper(typeof(DatingRepository).Assembly);
+            services.AddScoped<IAuthRepository, AuthRepository>(); // This needs to be included to use the services 
+            services.AddScoped<IDatingRepository, DatingRepository>(); // This needs to be included to use the services 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options => { 
                         options.TokenValidationParameters = new TokenValidationParameters {
